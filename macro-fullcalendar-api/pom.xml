@@ -58,7 +58,7 @@
     <dependency>
       <groupId>org.mnode.ical4j</groupId>
       <artifactId>ical4j</artifactId>
-      <version>4.2.0</version>
+      <version>4.2.5</version>
       <exclusions>
         <!-- Banned dependency. Has been replaced with com.sun.mail:jakarta.mail -->
         <exclusion>
