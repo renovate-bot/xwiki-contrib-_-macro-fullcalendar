@@ -32,7 +32,7 @@
   <packaging>jar</packaging>
   <description>Client side resources required by the fullcalendar.io integration in XWiki.</description>
   <properties>
-    <momentjs.version>2.18.1</momentjs.version>
+    <momentjs.version>2.30.1-1</momentjs.version>
     <fullcalendar.version>3.10.2</fullcalendar.version>
     <jqueryui.version>1.11.4</jqueryui.version>
     <webjar.contentDirectory>${project.build.outputDirectory}/META-INF/resources/webjars/${project.artifactId}/${project.version}</webjar.contentDirectory>
