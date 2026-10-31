@@ -1,0 +1,100 @@
+<?xml version="1.1" encoding="UTF-8"?>
+
+<!--
+ * See the NOTICE file distributed with this work for additional
+ * information regarding copyright ownership.
+ *
+ * This is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation; either version 2.1 of
+ * the License, or (at your option) any later version.
+ *
+ * This software is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this software; if not, write to the Free
+ * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+ * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+-->
+
+<xwikidoc version="1.5" reference="Calendar.Translations" locale="da">
+  <web>Calendar</web>
+  <name>Translations</name>
+  <language>da</language>
+  <defaultLanguage>en</defaultLanguage>
+  <translation>1</translation>
+  <creator>xwiki:XWiki.Admin</creator>
+  <parent>Calendar.WebHome</parent>
+  <author>xwiki:XWiki.Admin</author>
+  <contentAuthor>xwiki:XWiki.Admin</contentAuthor>
+  <version>1.1</version>
+  <title>Calendar Translations</title>
+  <comment/>
+  <minorEdit>false</minorEdit>
+  <syntaxId>plain/1.0</syntaxId>
+  <hidden>true</hidden>
+  <content>### Missing: xwiki.calendar.monthNames=
+### Missing: xwiki.calendar.monthNamesShort=
+### Missing: xwiki.calendar.dayNames=
+### Missing: xwiki.calendar.dayNamesShort=
+### Missing: xwiki.calendar.columnFormat.month=
+### Missing: xwiki.calendar.columnFormat.week=
+### Missing: xwiki.calendar.columnFormat.day=
+### Missing: xwiki.calendar.event.description=
+### Missing: xwiki.calendar.event.location=
+### Missing: xwiki.calendar.event.status=
+### Missing: xwiki.calendar.titleFormat.month=
+### Missing: xwiki.calendar.titleFormat.week=
+### Missing: xwiki.calendar.titleFormat.day=
+### Missing: xwiki.calendar.timeFormat=
+### Missing: xwiki.calendar.axisFormat=
+### Missing: xwiki.calendar.allDayText=
+### Missing: xwiki.calendar.button.today=
+### Missing: xwiki.calendar.button.day=
+### Missing: xwiki.calendar.button.week=
+### Missing: xwiki.calendar.button.month=
+### Missing: xwiki.calendar.notification.inprogress=
+### Missing: xwiki.calendar.notification.done=
+### Missing: xwiki.calendar.notification.error=
+### Missing: xwiki.calendar.notification.loading=
+### Missing: xwiki.calendar.notification.loaded=
+### Missing: xwiki.calendar.jsonservice.invalid=
+### Missing: rendering.macro.calendar.name=
+### Missing: rendering.macro.calendar.description=
+### Missing: rendering.macro.calendar.parameter.gApiKey.name=
+### Missing: rendering.macro.calendar.parameter.gApiKey.description=
+### Missing: rendering.macro.calendar.parameter.gCal.name=
+### Missing: rendering.macro.calendar.parameter.gCal.description=
+### Missing: rendering.macro.calendar.parameter.json.name=
+### Missing: rendering.macro.calendar.parameter.json.description=
+### Missing: rendering.macro.calendar.parameter.updateurl.name=
+### Missing: rendering.macro.calendar.parameter.updateurl.description=
+### Missing: rendering.macro.calendar.parameter.classname.name=
+### Missing: rendering.macro.calendar.parameter.classname.description=
+### Missing: rendering.macro.calendar.parameter.startfield.name=
+### Missing: rendering.macro.calendar.parameter.startfield.description=
+### Missing: rendering.macro.calendar.parameter.durationfield.name=
+### Missing: rendering.macro.calendar.parameter.durationfield.description=
+### Missing: rendering.macro.calendar.parameter.editable.name=
+### Missing: rendering.macro.calendar.parameter.editable.description=
+### Missing: rendering.macro.calendar.parameter.defaultView.name=
+### Missing: rendering.macro.calendar.parameter.defaultView.description=
+### Missing: rendering.macro.calendar.parameter.year.name=
+### Missing: rendering.macro.calendar.parameter.year.description=
+### Missing: rendering.macro.calendar.parameter.month.name=
+### Missing: rendering.macro.calendar.parameter.month.description=
+### Missing: rendering.macro.calendar.parameter.date.name=
+### Missing: rendering.macro.calendar.parameter.date.description=
+### Missing: rendering.macro.calendar.parameter.firstDay.name=
+### Missing: rendering.macro.calendar.parameter.firstDay.description=
+### Missing: rendering.macro.calendar.parameter.firstHour.name=
+### Missing: rendering.macro.calendar.parameter.firstHour.description=
+### Missing: rendering.macro.calendar.parameter.minTime.name=
+### Missing: rendering.macro.calendar.parameter.minTime.description=
+### Missing: rendering.macro.calendar.parameter.maxTime.name=
+### Missing: rendering.macro.calendar.parameter.maxTime.description=
+</content>
+</xwikidoc>
