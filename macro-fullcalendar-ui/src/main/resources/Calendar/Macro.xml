@@ -383,6 +383,20 @@ or
  #set($gApiKey = 'AIzaSyDedBXsLGUPKGT2SKh1aZXXJZKdpEc8bQU')
 #end
 #set($gCal = $xcontext.macro.params.gCal)
+## The URL used to fetch the events: the parameter values are URL encoded here, and the whole URL is escaped when it's
+## written in the JavaScript code below.
+#set($jsonParameters = {
+  'xpage': 'plain',
+  'outputSyntax': 'plain',
+  'classname': "$!xcontext.macro.params.classname",
+  'startfield': "$!xcontext.macro.params.startfield",
+  'endfield': "$!xcontext.macro.params.endfield",
+  'durationfield': "$!xcontext.macro.params.durationfield",
+  'extraFields': "$!extraFields",
+  'form_token': "$!services.csrf.token"
+})
+#set($jsonURL = "$!json#if($stringtool.contains($json, '?'))&amp;#{else}?#{end}$escapetool.url($jsonParameters)")
+#set($truncatedMessage = $services.localization.render('xwiki.calendar.notification.truncated', ['__maxEvents__']))
 {{html clean="false"}}
 &lt;script&gt;
 /************************************
@@ -435,6 +449,54 @@ require(['fullcalendar-setup'], function() {
     var dayNames = $!services.localization.render('xwiki.calendar.dayNames');
     var dayNamesShort = $!services.localization.render('xwiki.calendar.dayNamesShort');
 
+    // The JSON service returns the events by pages. The URL of the next page, if any, is given in the Link response
+    // header (RFC 8288), with rel="next".
+    function getNextPageURL(xhr) {
+      var match = /&lt;([^&gt;]*)&gt;\s*;\s*rel="next"/.exec(xhr.getResponseHeader('Link') || '');
+      return match ? match[1] : null;
+    }
+
+    // Identifies the latest fetch, to stop fetching the pages of a date range the user is no longer displaying.
+    var lastFetchId = 0;
+    function fetchEvents(url, data, callback) {
+      var fetchId = ++lastFetchId;
+      var events = [];
+      // A newer fetch replaced this one when the user moved to another date range in the meantime. FullCalendar ignores
+      // the events of an outdated fetch, but the callback still has to be called for its loading state to end.
+      var isOutdated = function() {
+        return fetchId !== lastFetchId;
+      };
+      var fetchPage = function(pageURL, pageData) {
+        // Disable the cache like the FullCalendar JSON feed event source does, to always get up to date events.
+        $.ajax({url: pageURL, data: pageData, dataType: 'json', cache: false}).done(function(pageEvents, status, xhr) {
+          if (isOutdated()) {
+            callback([]);
+            return;
+          }
+          events = events.concat(pageEvents);
+          var nextPageURL = getNextPageURL(xhr);
+          if (nextPageURL) {
+            fetchPage(nextPageURL);
+          } else {
+            // The service returns a limited number of events, and sets this header when more events match.
+            var maxEvents = xhr.getResponseHeader('X-Calendar-Truncated');
+            if (maxEvents) {
+              new XWiki.widgets.Notification(
+                "$escapetool.javascript($truncatedMessage)".replace('__maxEvents__', maxEvents), 'warning');
+            }
+            callback(events);
+          }
+        }).fail(function() {
+          if (!isOutdated()) {
+            new XWiki.widgets.Notification(
+              "$escapetool.javascript($services.localization.render('xwiki.calendar.notification.loadingFailed'))", 'error');
+          }
+          callback(events);
+        });
+      };
+      fetchPage(url, data);
+    }
+
     function init() {
       // The page is now ready, initialize the calendar...
       var progressNotification;
@@ -469,7 +531,11 @@ require(['fullcalendar-setup'], function() {
         googleCalendarApiKey : "$gApiKey",
         eventSources: [
           #if($json != $jsonService || "$!xcontext.macro.params.classname" != '')
-            "${json}#if($stringtool.contains($json, "?"))&amp;#{else}?#{end}xpage=plain&amp;outputSyntax=plain&amp;classname=$!{xcontext.macro.params.classname}&amp;startfield=$!{xcontext.macro.params.startfield}&amp;endfield=$!{xcontext.macro.params.endfield}&amp;durationfield=$!{xcontext.macro.params.durationfield}&amp;extraFields=$!{extraFields}&amp;form_token=$!{services.csrf.token}"
+            {
+              events: function(start, end, timezone, callback) {
+                fetchEvents("$escapetool.javascript($jsonURL)", {start: start.format(), end: end.format()}, callback);
+              }
+            }
           #end
           #if($!gCal != '')
             ,
@@ -1076,7 +1142,7 @@ The editable parameter needs to be set to true for this field to be used.</descr
       <defaultValue>datetime</defaultValue>
     </property>
     <property>
-      <description>Field in the object where the start date of the events are stored. The field needs to be a date field. The parameter is necessary unless a JSON service and and Update URL are provided</description>
+      <description>Field in the object where the start date of the events are stored. The field needs to be a date field of the class specified by the classname parameter. The parameter is necessary unless a JSON service and and Update URL are provided</description>
     </property>
     <property>
       <mandatory/>

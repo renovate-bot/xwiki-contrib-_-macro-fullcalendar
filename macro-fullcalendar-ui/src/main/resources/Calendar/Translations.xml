@@ -67,6 +67,8 @@ xwiki.calendar.notification.done=Saved
 xwiki.calendar.notification.error=Failed to save the document. Reason: update failed!
 xwiki.calendar.notification.loading=Loading calendar...
 xwiki.calendar.notification.loaded=Calendar loaded
+xwiki.calendar.notification.loadingFailed=Failed to load the calendar events.
+xwiki.calendar.notification.truncated=There are too many events to display, only the first {0} are displayed.
 
 xwiki.calendar.jsonservice.invalid=Field not allowed or invalid.
 
@@ -83,7 +85,7 @@ rendering.macro.calendar.parameter.updateurl.description=URL page to update even
 rendering.macro.calendar.parameter.classname.name=Classname
 rendering.macro.calendar.parameter.classname.description=Classname where the event objects are stored. The parameter is necessary unless a JSON service and and Update URL are provided
 rendering.macro.calendar.parameter.startfield.name=Start Field
-rendering.macro.calendar.parameter.startfield.description=Field in the object where the start date of the events are stored. The field needs to be a date field. The parameter is necessary unless a JSON service and and Update URL are provided
+rendering.macro.calendar.parameter.startfield.description=Field in the object where the start date of the events are stored. The field needs to be a date field of the class specified by the classname parameter. The parameter is necessary unless a JSON service and and Update URL are provided
 rendering.macro.calendar.parameter.durationfield.name=Duration Field
 rendering.macro.calendar.parameter.durationfield.description=Field in the object where the duration of the events are stored. The field needs to be a date field. The parameter is necessary unless a JSON service and and Update URL are provided
 rendering.macro.calendar.parameter.editable.name=Editable

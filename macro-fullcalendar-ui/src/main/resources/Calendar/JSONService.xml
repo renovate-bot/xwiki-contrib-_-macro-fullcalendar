@@ -38,7 +38,11 @@
   <hidden>true</hidden>
   <content>{{velocity output='false'}}
 #macro (getField $classField $useDisplay)
-  #set ($result = $escapetool.xml($services.localization.render('xwiki.calendar.jsonservice.invalid')))
+  ## The message is the same for all the fields and events of a request, so compute it only once.
+  #if (!$invalidFieldMessage)
+    #set ($invalidFieldMessage = $escapetool.xml($services.localization.render('xwiki.calendar.jsonservice.invalid')))
+  #end
+  #set ($result = $invalidFieldMessage)
   #set ($propertyClass = $itemdoc.getFirstObject($classField).getProperty($classField).getPropertyClass())
   #if ($propertyClass)
     #if (($propertyClass.getClassType() != 'Email' || !$services.mail.general.shouldObfuscate()) &amp;&amp;
@@ -65,33 +69,115 @@
 {{/velocity}}
 {{velocity filter="html" wiki="false"}}
 #if ($xcontext.action == 'get' &amp;&amp; $services.csrf.isTokenValid($request.form_token))
-  #if ("$!{request.outputSyntax}" == 'plain')
-    $response.setContentType('application/json')
+  ## The events are returned by pages, to avoid loading a huge number of documents in memory in a single request. When
+  ## more events match, the URL of the next page is returned in the Link response header (RFC 8288), with rel="next".
+  ## The body stays a JSON array of events, so that the service remains compatible with any JSON event feed client.
+  ## At most $maxPages pages are returned for a request: when more events match, the X-Calendar-Truncated response
+  ## header is set on the last page instead of the Link header.
+  ## TODO: When the parent is upgraded to XWiki 17.7.0+, use the platform query limit instead of this hard coded page 
+  ## size: #getAndValidateQueryLimitFromRequest (or #validateQueryLimit) validates the limit against the 
+  ## security.queryItemsLimit configuration (1000 by default) and sends a 400 error response when it's exceeded or 
+  ## when an unlimited query (-1) is requested.
+  #set ($pageSize = 1000)
+  #set ($maxPages = 10)
+  #set ($maxEvents = $mathtool.mul($pageSize, $maxPages))
+  #set ($offset = $numbertool.toNumber($request.offset).intValue())
+  #if (!$offset || $offset &lt; 0)
+    #set ($offset = 0)
   #end
-  #set ($hqlStatement =", BaseObject as obj $!{request.fromsql} where doc.fullName=obj.name and obj.className=:classname $!{request.wheresql}")
   #set ($jsonResult = [])
   #set ($started = false)
   #set ($extraFields = $request.extraFields.split(','))
+  #set ($startField = "$!request.startfield")
+  #set ($endField = "$!request.endfield")
+  #set ($durationField = "$!request.durationfield")
+  ## Only the objects having a date value for the start field can be displayed, so filter them in the query instead of
+  ## loading all the documents having an object of the requested class. This means that the start field has to be a
+  ## date property of the requested class, stored as a standard property (so not using a custom mapping).
+  #set ($fromClause = ', BaseObject as obj, DateProperty as startProp')
+  #set ($whereClause = 'doc.fullName=obj.name and obj.className=:classname and startProp.id.id=obj.id and startProp.id.name=:startfield and startProp.value is not null')
+  #set ($bindings = {'classname': "$!request.classname", 'startfield': $startField})
+  ## Order by object id too, so that the order is stable between the pages for events having the same start date.
+  #set ($orderBy = 'startProp.value, obj.id')
+  ## FullCalendar sends the displayed date range in the start (inclusive) and end (exclusive) parameters, using the
+  ## ISO 8601 format (e.g. 2026-11-16 or 2026-11-16T00:00:00). Only the date part is used (the parsing ignores what
+  ## follows it), interpreted in the user's time zone, which is also the one used to format the event dates below. A
+  ## missing or invalid value is parsed as null, which means no limit.
+  #set ($userTimeZone = $datetool.timeZone.getTimeZone($xwiki.getUserTimeZone()))
+  #set ($rangeStart = $datetool.toDate('yyyy-MM-dd', $request.start, $datetool.locale, $userTimeZone))
+  #set ($rangeEnd = $datetool.toDate('yyyy-MM-dd', $request.end, $datetool.locale, $userTimeZone))
+  #if ($rangeEnd)
+    #set ($whereClause = "$whereClause and startProp.value &lt; :rangeEnd")
+    #set ($discard = $bindings.put('rangeEnd', $rangeEnd))
+  #end
+  #if ($rangeStart)
+    #if ($endField != '')
+      ## Return the events that overlap the displayed range: the events that start inside the range, whenever they end,
+      ## and the events that started before the range and end inside or after it. The start date is also checked, and
+      ## not only the end date, so that an event with an empty end date, or with an end date before its start date, is
+      ## returned when it starts inside the range.
+      ## The end date is joined because a subquery on a property is not allowed without programming rights. As a
+      ## consequence, an event whose object doesn't have the end date property at all (e.g. because the end field was
+      ## added to the class after the event was last saved) is not returned.
+      #set ($fromClause = "$fromClause, DateProperty as endProp")
+      #set ($whereClause = "$whereClause and endProp.id.id=obj.id and endProp.id.name=:endfield and (startProp.value &gt;= :rangeStart or endProp.value &gt;= :rangeStart)")
+      #set ($discard = $bindings.put('endfield', $endField))
+      #set ($discard = $bindings.put('rangeStart', $rangeStart))
+    #elseif ($durationField != '')
+      ## The end date is not stored and it can't be computed by the query, so an event that started before the displayed
+      ## range can still be part of it: don't limit the start date, and return the most recent events first, so that
+      ## the limit of returned events applies to the oldest events, which are the least likely to be displayed.
+      #set ($orderBy = 'startProp.value desc, obj.id')
+    #else
+      #set ($whereClause = "$whereClause and startProp.value &gt;= :rangeStart")
+      #set ($discard = $bindings.put('rangeStart', $rangeStart))
+    #end
+  #end
+  #set ($whereSQL = "$!request.wheresql")
+  #set ($hqlStatement = "$fromClause $!{request.fromsql} where $whereClause $whereSQL")
+  ## Keep the order requested by the caller, if any.
+  #if (!$whereSQL.toLowerCase().matches('(?s).*\border\s+by\b.*'))
+    #set ($hqlStatement = "$hqlStatement order by $orderBy")
+  #end
+  #set ($query = $services.query.hql($hqlStatement))
+  #foreach ($binding in $bindings.entrySet())
+    #set ($query = $query.bindValue($binding.key, $binding.value))
+  #end
+  ## Fetch one more result than the page size to know if there is a next page. The view right is checked after the
+  ## query, so the pagination is based on the query results and not on the number of events returned.
+  #set ($query = $query.addFilter('currentlanguage').setOffset($offset).setLimit($mathtool.add($pageSize, 1)))
   ## Drop programming rights before the query execution to ensure it is properly validated.
   #set ($discard = $xcontext.dropPermissions())
-  #foreach ($item in $services.query.hql($hqlStatement).bindValue("classname", "$!{request.classname}").addFilter('currentlanguage').execute())
-    #set ($itemdoc   = $xwiki.getDocument($item))
-    #set ($startField = $request.startfield)
-    ##
-    #if ("$!startField" != '' &amp;&amp; $itemdoc.getValue($startField))
+  #set ($items = [])
+  #if ($startField != '' &amp;&amp; $offset &lt; $maxEvents)
+    #set ($items = $query.execute())
+  #end
+  #set ($nextOffset = $mathtool.add($offset, $pageSize))
+  #set ($hasMore = $items.size() &gt; $pageSize)
+  #if ($hasMore)
+    #set ($items = $items.subList(0, $pageSize))
+  #end
+  #foreach ($item in $items)
+    ## Skip the documents the current user is not allowed to view, without loading them.
+    #set ($itemReference = $services.model.resolveDocument($item))
+    ## Reset the start date, since it's not set below when the access is denied.
+    #set ($startdate = $NULL)
+    #if ($services.security.authorization.hasAccess('view', $itemReference))
+      #set ($itemdoc = $xwiki.getDocument($itemReference))
       #set ($startdate = $itemdoc.getValue($startField))
+    #end
+    ##
+    #if ($startdate)
       #set ($start  = $xwiki.formatDate($startdate, 'yyyy/MM/dd HH:mm'))
       #set ($allDay = true)
-      #set ($endField = $request.endfield)
-      #set ($durationField = $request.durationfield)
-      #if ("$!endField" != '')
+      #if ($endField != '')
         #set ($enddate = $itemdoc.getValue($endField))
         #set ($end = $xwiki.formatDate($enddate, 'yyyy/MM/dd HH:mm'))
         #set ($allDay  = false)
-      #elseif ("$!durationField" != '')
+      #elseif ($durationField != '')
         #set ($duration  = $itemdoc.getValue($durationField))
         #set ($enddate = $xwiki.jodatime.getDateTime($startdate.getTime()))
-        #set ($enddate = $enddate.plusMinutes($mathtool.toInteger($duration)))
+        #set ($enddate = $enddate.plusMinutes($numbertool.toNumber($duration).intValue()))
         #set ($end     = $xwiki.formatDate($enddate.toDate(), 'yyyy/MM/dd HH:mm'))
         #set ($allDay  = false)
       #end
@@ -121,7 +207,26 @@
       #set ($discard = $jsonResult.add($currentResult))
     #end
   #end
-  $jsontool.serialize($jsonResult)
+  #if ($hasMore &amp;&amp; $nextOffset &lt; $maxEvents)
+    #set ($nextParameters = {})
+    #foreach ($parameterName in $request.parameterMap.keySet())
+      #if ($parameterName != 'offset')
+        #set ($discard = $nextParameters.put($parameterName, $request.getParameterValues($parameterName)))
+      #end
+    #end
+    #set ($discard = $nextParameters.put('offset', $nextOffset))
+    #set ($nextURL = $doc.getURL('get', $escapetool.url($nextParameters)))
+    #set ($discard = $response.setHeader('Link', '&lt;' + $nextURL + '&gt;; rel="next"'))
+  #elseif ($hasMore)
+    #set ($discard = $response.setHeader('X-Calendar-Truncated', "$maxEvents"))
+  #end
+  #if ("$!{request.outputSyntax}" == 'plain')
+    ## Write the JSON directly on the response, to avoid parsing and rendering the output of this macro: this takes
+    ## time and memory when there are many events, and the rendering transformations could alter the JSON.
+    #jsonResponse($jsonResult)
+  #else
+    $jsontool.serialize($jsonResult)
+  #end
 #end
 {{/velocity}}</content>
 </xwikidoc>
