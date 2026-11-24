@@ -58,7 +58,7 @@ xwiki.calendar.notification.error=Impossible d'enregistrer le document. Erreur :
 xwiki.calendar.notification.loading=Chargement de l'agenda...
 xwiki.calendar.notification.loaded=Agenda chargé
 xwiki.calendar.notification.loadingFailed=Échec du chargement des évènements du calendrier.
-xwiki.calendar.notification.truncated=Il y a trop d''évènements à afficher, seule les {0} premiers sont affichés.
+xwiki.calendar.notification.truncated=Il y a beaucoup d''évènements à afficher, seuls les {0} premiers sont affichés.
 xwiki.calendar.jsonservice.invalid=Champ interdit ou non valide.
 rendering.macro.calendar.name=Calendrier
 rendering.macro.calendar.description=Afficher un Calendrier
@@ -113,5 +113,6 @@ xwiki.calendar.dayNames=['Dimanche','Lundi','Mardi','Mercredi','Jeudi','Vendredi
 xwiki.calendar.dayNamesShort=['Dim','Lun','Mar','Mer','Jeud','Ven','Sam']
 
 ## Used to indicate where deprecated keys end
-#@deprecatedend</content>
+#@deprecatedend
+</content>
 </xwikidoc>
