@@ -36,12 +36,7 @@
   <minorEdit>false</minorEdit>
   <syntaxId>plain/1.0</syntaxId>
   <hidden>true</hidden>
-  <content>xwiki.calendar.monthNames=['Január', 'Február', 'Marec', 'Apríl', 'Máj', 'Jún', 'Júl', 'August', 'September', 'Október', 'November', 'December']
-xwiki.calendar.monthNamesShort=['Jan', 'Febr', 'Mar', 'Apr', 'Máj', 'Jún', 'Júl', 'Aug', 'Sept', 'Okt', 'Nov', 'Dec']
-xwiki.calendar.dayNames=['Nedeľa', 'Pondelok', 'Utorok', 'Streda', 'Štvrtok', 'Piatok', 'Sobota']
-xwiki.calendar.dayNamesShort=['Ned', 'Pon', 'Ut', 'Str', 'Štv', 'Pia', 'Sob']
-
-### Missing: xwiki.calendar.columnFormat.month=ddd
+  <content>### Missing: xwiki.calendar.columnFormat.month=ddd
 ### Missing: xwiki.calendar.columnFormat.week=ddd M/D
 ### Missing: xwiki.calendar.columnFormat.day=dddd M/D
 
@@ -101,5 +96,25 @@ rendering.macro.calendar.parameter.firstHour.name=Prvá hodina
 ### Missing: rendering.macro.calendar.parameter.minTime.name=Min Time
 ### Missing: rendering.macro.calendar.parameter.minTime.description=First time to show in the calendar. Users won't see hours before this time. Leave empty for default (8.00)
 ### Missing: rendering.macro.calendar.parameter.maxTime.name=Max Time
-### Missing: rendering.macro.calendar.parameter.maxTime.description=Last time to show in the calendar. Users won't see hours after this time. Leave empty for default (23.00)</content>
+### Missing: rendering.macro.calendar.parameter.maxTime.description=Last time to show in the calendar. Users won't see hours after this time. Leave empty for default (23.00)
+
+###############################################################################
+## Deprecated
+## Note: each element should be removed when the last branch using it is no longer supported
+###############################################################################
+
+## Used to indicate where deprecated keys start
+#@deprecatedstart
+
+##################################################
+## until 2.5.6
+##################################################
+
+xwiki.calendar.monthNames=['Január', 'Február', 'Marec', 'Apríl', 'Máj', 'Jún', 'Júl', 'August', 'September', 'Október', 'November', 'December']
+xwiki.calendar.monthNamesShort=['Jan', 'Febr', 'Mar', 'Apr', 'Máj', 'Jún', 'Júl', 'Aug', 'Sept', 'Okt', 'Nov', 'Dec']
+xwiki.calendar.dayNames=['Nedeľa', 'Pondelok', 'Utorok', 'Streda', 'Štvrtok', 'Piatok', 'Sobota']
+xwiki.calendar.dayNamesShort=['Ned', 'Pon', 'Ut', 'Str', 'Štv', 'Pia', 'Sob']
+
+## Used to indicate where deprecated keys end
+#@deprecatedend</content>
 </xwikidoc>

@@ -36,11 +36,7 @@
   <minorEdit>false</minorEdit>
   <syntaxId>plain/1.0</syntaxId>
   <hidden>true</hidden>
-  <content>xwiki.calendar.monthNames=['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月']
-xwiki.calendar.monthNamesShort=['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月']
-xwiki.calendar.dayNames=['日曜日', '月曜日', '火曜日', '水曜日', '木曜日', '金曜日', '土曜日']
-xwiki.calendar.dayNamesShort=['日', '月', '火', '水', '木', '金', '土']
-xwiki.calendar.columnFormat.month=曜日
+  <content>xwiki.calendar.columnFormat.month=曜日
 xwiki.calendar.columnFormat.week=曜日 月/日
 xwiki.calendar.columnFormat.day=曜日 月/日
 xwiki.calendar.event.description=説明：
@@ -95,5 +91,24 @@ rendering.macro.calendar.parameter.minTime.name=最も早い時間
 rendering.macro.calendar.parameter.minTime.description=カレンダーに表示する最初の時間。この時間以前は表示できません。空のままにすると既定の値（8:00）を使用します
 rendering.macro.calendar.parameter.maxTime.name=最も遅い時間
 rendering.macro.calendar.parameter.maxTime.description=カレンダーに表示する最も遅い時間。この時間以後は表示できません。空のままにすると既定の値（23:00）を使用します
-</content>
+
+###############################################################################
+## Deprecated
+## Note: each element should be removed when the last branch using it is no longer supported
+###############################################################################
+
+## Used to indicate where deprecated keys start
+#@deprecatedstart
+
+##################################################
+## until 2.5.6
+##################################################
+
+xwiki.calendar.monthNames=['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月']
+xwiki.calendar.monthNamesShort=['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月']
+xwiki.calendar.dayNames=['日曜日', '月曜日', '火曜日', '水曜日', '木曜日', '金曜日', '土曜日']
+xwiki.calendar.dayNamesShort=['日', '月', '火', '水', '木', '金', '土']
+
+## Used to indicate where deprecated keys end
+#@deprecatedend</content>
 </xwikidoc>

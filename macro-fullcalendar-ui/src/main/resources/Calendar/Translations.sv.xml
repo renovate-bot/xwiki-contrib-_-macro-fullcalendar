@@ -36,11 +36,7 @@
   <minorEdit>false</minorEdit>
   <syntaxId>plain/1.0</syntaxId>
   <hidden>true</hidden>
-  <content>xwiki.calendar.monthNames=['Januari', 'Februari', 'Mars', 'April', 'Maj', 'Juni', 'Juli', 'Augusti', 'September', 'Oktober', 'November', 'December']
-xwiki.calendar.monthNamesShort=['Jan', 'Feb', 'Mar', 'Apr', 'Maj', 'Jun', 'Jul', 'Aug', 'Sep', 'Okt', 'Nov', 'Dec']
-xwiki.calendar.dayNames=['söndag', 'måndag', 'tisdag', 'onsdag', 'torsdag', 'fredag', 'lördag']
-xwiki.calendar.dayNamesShort=['sön', 'mån', 'tis', 'ons', 'tor', 'fre', 'lör']
-xwiki.calendar.columnFormat.month=ddd
+  <content>xwiki.calendar.columnFormat.month=ddd
 xwiki.calendar.columnFormat.week=ddd D/M
 xwiki.calendar.columnFormat.day=dddd D/M
 xwiki.calendar.event.description=Beskrivning:
@@ -95,5 +91,24 @@ rendering.macro.calendar.parameter.minTime.name=Minsta tid
 rendering.macro.calendar.parameter.minTime.description=Första tidpunkt som visas i kalendern. Timmar före denna visas ej. Lämna tomt för standardvärde (8.00)
 rendering.macro.calendar.parameter.maxTime.name=Max tid
 rendering.macro.calendar.parameter.maxTime.description=Sista tidpunkt som visas i kalendern. Timmarna efter denna tidpunkt är ej synliga. Lämna tomt för standardvärdet (23.00)
-</content>
+
+###############################################################################
+## Deprecated
+## Note: each element should be removed when the last branch using it is no longer supported
+###############################################################################
+
+## Used to indicate where deprecated keys start
+#@deprecatedstart
+
+##################################################
+## until 2.5.6
+##################################################
+
+xwiki.calendar.monthNames=['Januari', 'Februari', 'Mars', 'April', 'Maj', 'Juni', 'Juli', 'Augusti', 'September', 'Oktober', 'November', 'December']
+xwiki.calendar.monthNamesShort=['Jan', 'Feb', 'Mar', 'Apr', 'Maj', 'Jun', 'Jul', 'Aug', 'Sep', 'Okt', 'Nov', 'Dec']
+xwiki.calendar.dayNames=['söndag', 'måndag', 'tisdag', 'onsdag', 'torsdag', 'fredag', 'lördag']
+xwiki.calendar.dayNamesShort=['sön', 'mån', 'tis', 'ons', 'tor', 'fre', 'lör']
+
+## Used to indicate where deprecated keys end
+#@deprecatedend</content>
 </xwikidoc>

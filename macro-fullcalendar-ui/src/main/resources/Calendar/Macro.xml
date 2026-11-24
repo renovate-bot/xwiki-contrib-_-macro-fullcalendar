@@ -379,9 +379,6 @@ or
  #set($updateurl = $xwiki.getDocument("Calendar.UpdateService").getURL("get"))
 #end
 #set($gApiKey = $xcontext.macro.params.gApiKey)
-#if(!$gApiKey)
- #set($gApiKey = 'AIzaSyDedBXsLGUPKGT2SKh1aZXXJZKdpEc8bQU')
-#end
 #set($gCal = $xcontext.macro.params.gCal)
 ## The URL used to fetch the events: the parameter values are URL encoded here, and the whole URL is escaped when it's
 ## written in the JavaScript code below.
@@ -392,10 +389,23 @@ or
   'startfield': "$!xcontext.macro.params.startfield",
   'endfield': "$!xcontext.macro.params.endfield",
   'durationfield': "$!xcontext.macro.params.durationfield",
-  'extraFields': "$!extraFields",
-  'form_token': "$!services.csrf.token"
+  'extraFields': "$!extraFields"
 })
+#if (!$xcontext.macro.params.json &amp;&amp; !$iCal)
+  ## Only send csrf to the built-in JSONService URL.
+  #set ($discard = $jsonParameters.put('form_token', $services.csrf.token))
+#end
 #set($jsonURL = "$!json#if($stringtool.contains($json, '?'))&amp;#{else}?#{end}$escapetool.url($jsonParameters)")
+## The URL used to update the events.
+#set ($updateURLQuery = {
+  'xpage': 'plain',
+  'outputSyntax': 'plain',
+  'classname': "$!xcontext.macro.params.classname",
+  'startfield': "$!xcontext.macro.params.startfield",
+  'endfield': "$!xcontext.macro.params.endfield",
+  'durationfield': "$!xcontext.macro.params.durationfield"
+})
+#set ($updateURL = "$updateurl#if($stringtool.contains($updateurl, '?'))&amp;#{else}?#{end}$escapetool.url($updateURLQuery)")
 #set($truncatedMessage = $services.localization.render('xwiki.calendar.notification.truncated', ['__maxEvents__']))
 {{html clean="false"}}
 &lt;script&gt;
@@ -407,13 +417,39 @@ require.config({
     'fullcalendar-setup': new XWiki.Document('FullCalendar', 'Calendar').getURL('jsx', 'minify=$!services.debug.minify')
   }
 });
+define('xwiki-fullcalendar-localization', {
+  prefix: 'xwiki.calendar.',
+  keys: [
+    'notification.done',
+    'notification.inprogress',
+    'notification.loading',
+    'notification.loaded',
+    'notification.error',
+    'columnFormat.day',
+    'columnFormat.week',
+    'columnFormat.month',
+    'titleFormat.day',
+    'titleFormat.week',
+    'titleFormat.month',
+    'button.day',
+    'button.week',
+    'button.month',
+    'timeFormat',
+    'axisFormat',
+    'allDayText',
+    'event.status',
+    'event.location',
+    'event.description',
+  ]
+});
 require(['fullcalendar-setup'], function() {
-  require(['jquery', 'jquery-ui', 'fullcalendar', 'gcal'], function ($) {
+  require(['jquery', 'xwiki-l10n!xwiki-fullcalendar-localization', 'jquery-ui', 'fullcalendar',
+      'gcal'], function ($, l10n) {
     function updateEvent(page, isResize, delta, allDay, revertFunc) {
       // Initialize notification boxes
-      var savingBox = new XWiki.widgets.Notification("$!services.localization.render('xwiki.calendar.notification.inprogress')", "inprogress", {inactive: true});
-      var savedBox  = new XWiki.widgets.Notification("$!services.localization.render('xwiki.calendar.notification.done')", "done", {inactive: true});
-      var failedBox = new XWiki.widgets.Notification("$!services.localization.render('xwiki.calendar.notification.error')", "error", {inactive: true});
+      var savingBox = new XWiki.widgets.Notification(l10n['notification.inprogress'], "inprogress", {inactive: true});
+      var savedBox  = new XWiki.widgets.Notification(l10n['notification.done'], "done", {inactive: true});
+      var failedBox = new XWiki.widgets.Notification(l10n['notification.error'], "error", {inactive: true});
 
       // Display loading notification
       savingBox.show();
@@ -425,10 +461,12 @@ require(['fullcalendar-setup'], function() {
       var minuteDelta = delta._data.hours * 60 + delta._data.minutes;
 
       // Let's call the calendar update
-      var url = '$updateurl';
-      url = url + "#if($stringtool.contains($updateurl, "?"))&amp;#{else}?#{end}xpage=plain&amp;outputSyntax=plain&amp;classname=$!{xcontext.macro.params.classname}&amp;startfield=$!{xcontext.macro.params.startfield}&amp;endfield=$!{xcontext.macro.params.endfield}&amp;durationfield=$!{xcontext.macro.params.durationfield}&amp;page=" + page + "&amp;isResize=" + (isResize ? "1" : "0") + "&amp;dayDelta=" + dayDelta + "&amp;minuteDelta=" + minuteDelta + ((allDay) ? "&amp;allDay=1" : "");
+      var url = '$escapetool.javascript($updateURL)';
+      url = url +
+        "&amp;page=" + page + "&amp;isResize=" + (isResize ? "1" : "0") + "&amp;dayDelta=" + dayDelta +
+        "&amp;minuteDelta=" + minuteDelta + ((allDay) ? "&amp;allDay=1" : "");
 
-      $.ajax({ url: url }).fail(function(data) {
+      $.ajax({ url: url, dataType: 'text' }).fail(function(data) {
         savingBox.hide();
         failedBox.show();
         revertFunc();
@@ -443,11 +481,6 @@ require(['fullcalendar-setup'], function() {
         }
       });
     }
-
-    var monthNames = $!services.localization.render('xwiki.calendar.monthNames')
-    var monthNamesShort = $!services.localization.render('xwiki.calendar.monthNamesShort');
-    var dayNames = $!services.localization.render('xwiki.calendar.dayNames');
-    var dayNamesShort = $!services.localization.render('xwiki.calendar.dayNamesShort');
 
     // The JSON service returns the events by pages. The URL of the next page, if any, is given in the Link response
     // header (RFC 8288), with rel="next".
@@ -468,7 +501,7 @@ require(['fullcalendar-setup'], function() {
       };
       var fetchPage = function(pageURL, pageData) {
         // Disable the cache like the FullCalendar JSON feed event source does, to always get up to date events.
-        $.ajax({url: pageURL, data: pageData, dataType: 'json', cache: false}).done(function(pageEvents, status, xhr) {
+        $.ajax({url: pageURL, data: pageData, dataType: 'json', jsonp: false, cache: false}).done(function(pageEvents, status, xhr) {
           if (isOutdated()) {
             callback([]);
             return;
@@ -497,38 +530,72 @@ require(['fullcalendar-setup'], function() {
       fetchPage(url, data);
     }
 
+    function maybeFallbackLocale(locale) {
+      try {
+        new Date().toLocaleString(locale)
+        return locale;
+      } catch (e) {
+        return 'en';
+      }
+    }
+    function getWeekdayNames(locale, format) {
+      locale = maybeFallbackLocale(locale);
+      let days = [];
+      for (let d = new Date(2023,5,11), i=7; i; --i) {
+        days.push(d.toLocaleString(locale, {weekday: format}));
+        d.setDate(d.getDate() + 1);
+      }
+      return days;
+    }
+    function getMonthNames(locale, format) {
+      locale = maybeFallbackLocale(locale);
+      let days = [];
+      for (let d = new Date(2023,12,1), i=12; i; --i) {
+        days.push(d.toLocaleString(locale, {month: format}));
+        d.setMonth(d.getMonth() + 1);
+      }
+      return days;
+    }
+
+    const pageLocale = "$escapetool.javascript($xcontext.locale.toLanguageTag())";
+
+    const monthNames = getMonthNames(pageLocale, 'long');
+    const monthNamesShort = getMonthNames(pageLocale, 'short');
+    const dayNames = getWeekdayNames(pageLocale, 'long');
+    const dayNamesShort = getWeekdayNames(pageLocale, 'short');
+
     function init() {
       // The page is now ready, initialize the calendar...
       var progressNotification;
-      $('#${containerId}').fullCalendar({
+      $('#${escapetool.javascript($containerId)}').fullCalendar({
         views: {
           month : {
-            columnFormat: "$!services.localization.render('xwiki.calendar.columnFormat.month')",
-            titleFormat: "$!services.localization.render('xwiki.calendar.titleFormat.month')",
-            buttonText: "$!services.localization.render('xwiki.calendar.button.month')"
+            columnFormat: l10n['columnFormat.month'],
+            titleFormat: l10n['titleFormat.month'],
+            buttonText: l10n['button.month']
           },
           week : {
-            columnFormat: "$!services.localization.render('xwiki.calendar.columnFormat.week')",
-            titleFormat: "$!services.localization.render('xwiki.calendar.titleFormat.week')",
-            buttonText: "$!services.localization.render('xwiki.calendar.button.week')"
+            columnFormat: l10n['columnFormat.week'],
+            titleFormat: l10n['titleFormat.week'],
+            buttonText: l10n['button.week']
           },
           day : {
-            columnFormat: "$!services.localization.render('xwiki.calendar.columnFormat.day')",
-            titleFormat: "$!services.localization.render('xwiki.calendar.titleFormat.day')",
-            buttonText: "$!services.localization.render('xwiki.calendar.button.day')"
+            columnFormat: l10n['columnFormat.day'],
+            titleFormat: l10n['titleFormat.day'],
+            buttonText: l10n['button.day']
           },
           today: {
-            buttonText: "$!services.localization.render('xwiki.calendar.button.today')"
+            buttonText: l10n['button.today']
           }
         },
-        timeFormat : "$!services.localization.render('xwiki.calendar.timeFormat')",
-        axisFormat : "$!services.localization.render('xwiki.calendar.axisFormat')",
-        allDayText : "$!services.localization.render('xwiki.calendar.allDayText')",
+        timeFormat : l10n['timeFormat'],
+        axisFormat : l10n['axisFormat'],
+        allDayText : l10n['allDayText'],
         monthNames      : monthNames,
         monthNamesShort : monthNamesShort,
         dayNames        : dayNames,
         dayNamesShort   : dayNamesShort,
-        googleCalendarApiKey : "$gApiKey",
+        googleCalendarApiKey : "$escapetool.javascript($gApiKey)",
         eventSources: [
           #if($json != $jsonService || "$!xcontext.macro.params.classname" != '')
             {
@@ -541,7 +608,7 @@ require(['fullcalendar-setup'], function() {
             ,
             #set($calendars = $stringtool.split($gCal, ','))
               #foreach($calendar in $calendars)
-                { googleCalendarId: "$stringtool.strip($calendar)" }
+                { googleCalendarId: "$escapetool.javascript($stringtool.strip($calendar))" }
                 #if($foreach.count &lt; $calendars.size())
                 ,
                 #end
@@ -549,18 +616,18 @@ require(['fullcalendar-setup'], function() {
           #end
         ],
         header: {
-          left   : '$left',
-          center : '$center',
-          right  : '$right'
+          left   : '$escapetool.javascript($left)',
+          center : '$escapetool.javascript($center)',
+          right  : '$escapetool.javascript($right)'
         }
-        #if($timeFormat  != ""), timeFormat  : '$timeFormat'  #end
-        #if($defaultView != ""), defaultView : '$defaultView' #end
-        #if($firstDay    != ""), firstDay    : '$firstDay'    #end
-        #if($firstHour   != ""), firstHour   : '$firstHour'   #end
-        #if($minTime     != ""), minTime     : '$minTime'     #end
-        #if($maxTime     != ""), maxTime     : '$maxTime'     #end
-        ,defaultDate : '${year}-${month}-${date}'
-        ,editable    : $editable
+        #if($timeFormat  != ""), timeFormat  : '$escapetool.javascript($timeFormat)'  #end
+        #if($defaultView != ""), defaultView : '$escapetool.javascript($defaultView)' #end
+        #if($firstDay    != ""), firstDay    : '$escapetool.javascript($firstDay)'    #end
+        #if($firstHour   != ""), firstHour   : '$escapetool.javascript($firstHour)'   #end
+        #if($minTime     != ""), minTime     : '$escapetool.javascript($minTime)'     #end
+        #if($maxTime     != ""), maxTime     : '$escapetool.javascript($maxTime)'     #end
+        ,defaultDate : '$escapetool.javascript("${year}-${month}-${date}")'
+        ,editable    : "$escapetool.javascript($editable)" === "true"
         ,eventDrop   : function(event, delta, revertFunc) {
           updateEvent(event.id, false, delta, event._allDay, revertFunc);
         }
@@ -571,32 +638,32 @@ require(['fullcalendar-setup'], function() {
           // Add tooltip on the calendar element.
           var tooltip = '';
           if (event.status) {
-            tooltip = tooltip + "$services.localization.render('xwiki.calendar.event.status') " + event.status + '\n';
+            tooltip = tooltip + l10n['event.status'] + ' ' + event.status + '\n';
           }
           if (event.location) {
-            tooltip = tooltip + "$services.localization.render('xwiki.calendar.event.location') " + event.location + '\n';
+            tooltip = tooltip + l10n['event.location'] + ' ' + event.location + '\n';
           }
           if (event.description) {
-            tooltip = tooltip + "$services.localization.render('xwiki.calendar.event.description') " + event.description;
+            tooltip = tooltip + l10n['event.description'] + ' ' + event.description;
           }
           element.attr('title', tooltip);
-          document.fire("xwiki:fullcalendar:${containerId}:eventrendering", { eventObj: event, eventElement: element });
+          document.fire("xwiki:fullcalendar:${escapetool.javascript($containerId)}:eventrendering", { eventObj: event, eventElement: element });
         },
         loading: function( isLoading) {
           if (isLoading) {
             if (typeof progressNotification === 'undefined') {
               progressNotification = new XWiki.widgets.Notification(
-                "$escapetool.javascript($services.localization.render('xwiki.calendar.notification.loading'))", 'inprogress');
+                l10n['notification.loading'], 'inprogress');
             } else {
               var oldNotification = progressNotification;
               progressNotification = new XWiki.widgets.Notification(
-                "$escapetool.javascript($services.localization.render('xwiki.calendar.notification.loading'))", 'inprogress');
+                l10n['notification.loading'], 'inprogress');
               oldNotification.replace(progressNotification);
             }
           } else {
             var oldNotification = progressNotification;
             progressNotification = new XWiki.widgets.Notification(
-              "$escapetool.javascript($services.localization.render('xwiki.calendar.notification.loaded'))", 'done');
+              l10n['notification.loaded'], 'done');
             oldNotification.replace(progressNotification);
           }
         }
@@ -604,11 +671,11 @@ require(['fullcalendar-setup'], function() {
     }
 
     function scheduleInit() {
-      clearTimeout(window['_calMacroTimer${calcounter}']);
-      window['_calMacroTimer${calcounter}'] = setTimeout(init, 200);
+      clearTimeout(window['_calMacroTimer${escapetool.javascript($calcounter)}']);
+      window['_calMacroTimer${escapetool.javascript($calcounter)}'] = setTimeout(init, 200);
     }
 
-    $(window).off('.calMacro${calcounter}').on('xwiki:dom:updated.calMacro${calcounter}', scheduleInit);
+    $(window).off('.calMacro${escapetool.javascript($calcounter)}').on('xwiki:dom:updated.calMacro${escapetool.javascript($calcounter)}', scheduleInit);
     scheduleInit();
   });
 });
@@ -714,7 +781,7 @@ require(['fullcalendar-setup'], function() {
       </type>
     </class>
     <property>
-      <defaultValue>AIzaSyDedBXsLGUPKGT2SKh1aZXXJZKdpEc8bQU</defaultValue>
+      <defaultValue/>
     </property>
     <property>
       <description>Key for the Google Calendar API.</description>

@@ -36,12 +36,7 @@
   <minorEdit>false</minorEdit>
   <syntaxId>plain/1.0</syntaxId>
   <hidden>true</hidden>
-  <content>xwiki.calendar.monthNames=['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
-xwiki.calendar.monthNamesShort=['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
-xwiki.calendar.dayNames=['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
-xwiki.calendar.dayNamesShort=['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
-
-xwiki.calendar.columnFormat.month=ddd
+  <content>xwiki.calendar.columnFormat.month=ddd
 xwiki.calendar.columnFormat.week=ddd M/D
 xwiki.calendar.columnFormat.day=dddd M/D
 
@@ -105,7 +100,27 @@ rendering.macro.calendar.parameter.firstHour.description=First hour to show in t
 rendering.macro.calendar.parameter.minTime.name=Min Time
 rendering.macro.calendar.parameter.minTime.description=First time to show in the calendar. Users won't see hours before this time. Leave empty for default (8.00)
 rendering.macro.calendar.parameter.maxTime.name=Max Time
-rendering.macro.calendar.parameter.maxTime.description=Last time to show in the calendar. Users won't see hours after this time. Leave empty for default (23.00)</content>
+rendering.macro.calendar.parameter.maxTime.description=Last time to show in the calendar. Users won't see hours after this time. Leave empty for default (23.00)
+
+###############################################################################
+## Deprecated
+## Note: each element should be removed when the last branch using it is no longer supported
+###############################################################################
+
+## Used to indicate where deprecated keys start
+#@deprecatedstart
+
+##################################################
+## until 2.5.6
+##################################################
+
+xwiki.calendar.monthNames=['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
+xwiki.calendar.monthNamesShort=['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+xwiki.calendar.dayNames=['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
+xwiki.calendar.dayNamesShort=['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
+
+## Used to indicate where deprecated keys end
+#@deprecatedend</content>
   <object>
     <name>Calendar.Translations</name>
     <number>0</number>

@@ -36,12 +36,7 @@
   <minorEdit>false</minorEdit>
   <syntaxId>plain/1.0</syntaxId>
   <hidden>true</hidden>
-  <content>xwiki.calendar.monthNames=['Enero', 'Febrero', 'Marzo', 'Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre']
-xwiki.calendar.monthNamesShort=['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic']
-xwiki.calendar.dayNames=['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado']
-xwiki.calendar.dayNamesShort=['Dom','Lun','Mar','Mié','Jue','Vie','Sáb']
-
-xwiki.calendar.columnFormat.month=ddd
+  <content>xwiki.calendar.columnFormat.month=ddd
 xwiki.calendar.columnFormat.week=ddd D/M
 xwiki.calendar.columnFormat.day=dddd D/M
 
@@ -101,5 +96,25 @@ rendering.macro.calendar.parameter.firstHour.description=Primer hora a mostrar e
 rendering.macro.calendar.parameter.minTime.name=Hora mínima
 rendering.macro.calendar.parameter.minTime.description=Primera hora a mostrar en el calendario. Los usuarios no verán horas previas a esta. Dejar vacío por defecto (8:00)
 rendering.macro.calendar.parameter.maxTime.name=Hora máxima
-rendering.macro.calendar.parameter.maxTime.description=Última hora que mostrar en el calendario. Los usuarios no veran horas posteriores a esta. Dejar vacío por defecto (23:00)</content>
+rendering.macro.calendar.parameter.maxTime.description=Última hora que mostrar en el calendario. Los usuarios no veran horas posteriores a esta. Dejar vacío por defecto (23:00)
+
+###############################################################################
+## Deprecated
+## Note: each element should be removed when the last branch using it is no longer supported
+###############################################################################
+
+## Used to indicate where deprecated keys start
+#@deprecatedstart
+
+##################################################
+## until 2.5.6
+##################################################
+
+xwiki.calendar.monthNames=['Enero', 'Febrero', 'Marzo', 'Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre']
+xwiki.calendar.monthNamesShort=['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic']
+xwiki.calendar.dayNames=['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado']
+xwiki.calendar.dayNamesShort=['Dom','Lun','Mar','Mié','Jue','Vie','Sáb']
+
+## Used to indicate where deprecated keys end
+#@deprecatedend</content>
 </xwikidoc>

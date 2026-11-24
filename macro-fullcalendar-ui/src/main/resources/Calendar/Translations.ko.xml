@@ -36,11 +36,7 @@
   <minorEdit>false</minorEdit>
   <syntaxId>plain/1.0</syntaxId>
   <hidden>true</hidden>
-  <content>xwiki.calendar.monthNames=['1월', '2월', '3월', '4월', '5월', '6월', '7월', '8월', '9월', '10월', '11월', '12월']
-xwiki.calendar.monthNamesShort=['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
-xwiki.calendar.dayNames=['일요일', '월요일', '화요일', '수요일', '목요일', '금요일', '토요일']
-xwiki.calendar.dayNamesShort=['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
-xwiki.calendar.columnFormat.month=ddd
+  <content>xwiki.calendar.columnFormat.month=ddd
 xwiki.calendar.columnFormat.week=ddd M/D
 xwiki.calendar.columnFormat.day=dddd M/D
 xwiki.calendar.event.description=비고:
@@ -95,5 +91,24 @@ rendering.macro.calendar.parameter.minTime.name=내 시간
 rendering.macro.calendar.parameter.minTime.description=달력에 처음으로 등장합니다. 사용자는 이 시간 이전의 시간을 볼 수 없습니다. 기본값(8.00)의 경우 비워 두세요
 rendering.macro.calendar.parameter.maxTime.name=최대 시간
 rendering.macro.calendar.parameter.maxTime.description=달력에 마지막으로 표시되는 시간입니다. 이 시간 이후에는 사용자에게 몇 시간이 표시되지 않습니다. 기본값(23.00)의 경우 비워 두세요
-</content>
+
+###############################################################################
+## Deprecated
+## Note: each element should be removed when the last branch using it is no longer supported
+###############################################################################
+
+## Used to indicate where deprecated keys start
+#@deprecatedstart
+
+##################################################
+## until 2.5.6
+##################################################
+
+xwiki.calendar.monthNames=['1월', '2월', '3월', '4월', '5월', '6월', '7월', '8월', '9월', '10월', '11월', '12월']
+xwiki.calendar.monthNamesShort=['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+xwiki.calendar.dayNames=['일요일', '월요일', '화요일', '수요일', '목요일', '금요일', '토요일']
+xwiki.calendar.dayNamesShort=['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
+
+## Used to indicate where deprecated keys end
+#@deprecatedend</content>
 </xwikidoc>
