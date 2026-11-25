@@ -66,19 +66,18 @@
     #end
   #end
 #end
-{{/velocity}}
-{{velocity filter="html" wiki="false"}}
+
 #if ($xcontext.action == 'get' &amp;&amp; $services.csrf.isTokenValid($request.form_token))
   ## The events are returned by pages, to avoid loading a huge number of documents in memory in a single request. When
   ## more events match, the URL of the next page is returned in the Link response header (RFC 8288), with rel="next".
   ## The body stays a JSON array of events, so that the service remains compatible with any JSON event feed client.
   ## At most $maxPages pages are returned for a request: when more events match, the X-Calendar-Truncated response
   ## header is set on the last page instead of the Link header.
-  ## TODO: When the parent is upgraded to XWiki 17.7.0+, use the platform query limit instead of this hard coded page 
-  ## size: #getAndValidateQueryLimitFromRequest (or #validateQueryLimit) validates the limit against the 
-  ## security.queryItemsLimit configuration (1000 by default) and sends a 400 error response when it's exceeded or 
-  ## when an unlimited query (-1) is requested.
-  #set ($pageSize = 1000)
+  ## TODO: Remove the fallback when the parent is upgraded to a version fixed by XWIKI-23355.
+  #set ($pageSize = $services.security.getQueryItemsLimit())
+  #if (!$pageSize || $pageSize &lt;= 0)
+    #set ($pageSize = 1000)
+  #end
   #set ($maxPages = 10)
   #set ($maxEvents = $mathtool.mul($pageSize, $maxPages))
   #set ($offset = $numbertool.toNumber($request.offset).intValue())
@@ -103,7 +102,7 @@
   ## ISO 8601 format (e.g. 2026-11-16 or 2026-11-16T00:00:00). Only the date part is used (the parsing ignores what
   ## follows it), interpreted in the user's time zone, which is also the one used to format the event dates below. A
   ## missing or invalid value is parsed as null, which means no limit.
-  #set ($userTimeZone = $datetool.timeZone.getTimeZone($xwiki.getUserTimeZone()))
+  #set ($userTimeZone = $xwiki.jodatime.getTimezone($xwiki.getUserTimeZone()).toTimeZone())
   #set ($rangeStart = $datetool.toDate('yyyy-MM-dd', $request.start, $datetool.locale, $userTimeZone))
   #set ($rangeEnd = $datetool.toDate('yyyy-MM-dd', $request.end, $datetool.locale, $userTimeZone))
   #if ($rangeEnd)
@@ -220,13 +219,7 @@
   #elseif ($hasMore)
     #set ($discard = $response.setHeader('X-Calendar-Truncated', "$maxEvents"))
   #end
-  #if ("$!{request.outputSyntax}" == 'plain')
-    ## Write the JSON directly on the response, to avoid parsing and rendering the output of this macro: this takes
-    ## time and memory when there are many events, and the rendering transformations could alter the JSON.
-    #jsonResponse($jsonResult)
-  #else
-    $jsontool.serialize($jsonResult)
-  #end
+  #jsonResponse($jsonResult)
 #end
 {{/velocity}}</content>
 </xwikidoc>
