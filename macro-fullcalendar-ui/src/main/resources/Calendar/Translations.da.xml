@@ -1,0 +1,102 @@
+<?xml version="1.1" encoding="UTF-8"?>
+
+<!--
+ * See the NOTICE file distributed with this work for additional
+ * information regarding copyright ownership.
+ *
+ * This is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation; either version 2.1 of
+ * the License, or (at your option) any later version.
+ *
+ * This software is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this software; if not, write to the Free
+ * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+ * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+-->
+
+<xwikidoc version="1.5" reference="Calendar.Translations" locale="da">
+  <web>Calendar</web>
+  <name>Translations</name>
+  <language>da</language>
+  <defaultLanguage>en</defaultLanguage>
+  <translation>1</translation>
+  <creator>xwiki:XWiki.Admin</creator>
+  <parent>Calendar.WebHome</parent>
+  <author>xwiki:XWiki.Admin</author>
+  <contentAuthor>xwiki:XWiki.Admin</contentAuthor>
+  <version>1.1</version>
+  <title>Calendar Translations</title>
+  <comment/>
+  <minorEdit>false</minorEdit>
+  <syntaxId>plain/1.0</syntaxId>
+  <hidden>true</hidden>
+  <content>xwiki.calendar.monthNames=['januar', 'februar', 'marts', 'april', 'maj', 'juni', 'juli', 'august', 'september', 'oktober', 'november', 'december']
+xwiki.calendar.monthNamesShort=['jan', 'feb', 'mar', 'apr', 'maj', 'jun', 'jul', 'aug', 'sep', 'okt', 'nov', 'dec']
+xwiki.calendar.dayNames=['søndag', 'mandag', 'tirsdag', 'onsdag', 'torsdag', 'fredag', 'lørdag']
+xwiki.calendar.dayNamesShort=['søn', 'man', 'tir', 'ons', 'tor', 'fre', 'lør']
+xwiki.calendar.columnFormat.month=ddd
+xwiki.calendar.columnFormat.week=ddd D/M
+xwiki.calendar.columnFormat.day=dddd D/M
+xwiki.calendar.event.description=Beskrivelse:
+xwiki.calendar.event.location=Sted:
+xwiki.calendar.event.status=Status:
+xwiki.calendar.titleFormat.month=MMMM YYYY
+xwiki.calendar.titleFormat.week=D. MMM YYYY
+xwiki.calendar.titleFormat.day=dddd D. MMM YYYY
+xwiki.calendar.timeFormat=HH:mm
+xwiki.calendar.axisFormat=HH:mm
+xwiki.calendar.allDayText=Hele dagen
+xwiki.calendar.button.today=i dag
+xwiki.calendar.button.day=dag
+xwiki.calendar.button.week=uge
+xwiki.calendar.button.month=måned
+xwiki.calendar.notification.inprogress=Gemmer...
+xwiki.calendar.notification.done=Gemt
+xwiki.calendar.notification.error=Siden kunne ikke gemmes. Årsag: Opdateringen mislykkedes!
+xwiki.calendar.notification.loading=Indlæser kalender...
+xwiki.calendar.notification.loaded=Kalenderen er indlæst
+xwiki.calendar.notification.loadingFailed=Kalenderens begivenheder kunne ikke indlæses.
+xwiki.calendar.notification.truncated=Der er for mange begivenheder til at vise dem alle; kun de første {0} vises.
+xwiki.calendar.jsonservice.invalid=Feltet er ikke tilladt eller ugyldigt.
+rendering.macro.calendar.name=Kalender
+rendering.macro.calendar.description=Viser en kalender
+rendering.macro.calendar.parameter.gApiKey.name=gApiKey
+rendering.macro.calendar.parameter.gApiKey.description=Nøgle til Google Calendar API.
+rendering.macro.calendar.parameter.gCal.name=gCal
+rendering.macro.calendar.parameter.gCal.description=Id'er for Google-kalendere adskilt med komma.
+rendering.macro.calendar.parameter.json.name=JSON
+rendering.macro.calendar.parameter.json.description=URL til en side, der genererer JSON. Det er kun nødvendigt, hvis den JSON, som Calendar.JSONService genererer, ikke passer til dit behov.
+rendering.macro.calendar.parameter.updateurl.name=URL til opdatering
+rendering.macro.calendar.parameter.updateurl.description=URL til den side, der opdaterer begivenheder, når de flyttes eller ændrer størrelse i kalenderen. Parameteren 'editable' skal være sat til true, for at feltet bruges.
+rendering.macro.calendar.parameter.classname.name=Klassenavn
+rendering.macro.calendar.parameter.classname.description=Navnet på den klasse, som begivenhedsobjekterne gemmes i. Parameteren er nødvendig, medmindre der er angivet en JSON-tjeneste og en URL til opdatering
+rendering.macro.calendar.parameter.startfield.name=Startfelt
+rendering.macro.calendar.parameter.startfield.description=Det felt i objektet, som begivenhedernes startdato gemmes i. Feltet skal være et datofelt i den klasse, som parameteren classname angiver. Parameteren er nødvendig, medmindre der er angivet en JSON-tjeneste og en URL til opdatering.
+rendering.macro.calendar.parameter.durationfield.name=Varighedsfelt
+rendering.macro.calendar.parameter.durationfield.description=Det felt i objektet, som begivenhedernes varighed gemmes i. Feltet skal være et datofelt. Parameteren er nødvendig, medmindre der er angivet en JSON-tjeneste og en URL til opdatering
+rendering.macro.calendar.parameter.editable.name=Kan redigeres
+rendering.macro.calendar.parameter.editable.description=Slår redigering til, så begivenheder kan flyttes
+rendering.macro.calendar.parameter.defaultView.name=Standardvisning
+rendering.macro.calendar.parameter.defaultView.description=Den visning, kalenderen starter med. Mulige værdier er: month, agendaWeek, agendaDay, basicWeek, basicDay
+rendering.macro.calendar.parameter.year.name=År
+rendering.macro.calendar.parameter.year.description=Året for den dato, der vises, når kalenderen indlæses. Lad feltet stå tomt for i dag
+rendering.macro.calendar.parameter.month.name=Måned
+rendering.macro.calendar.parameter.month.description=Måneden (fra 0 til 11) for den dato, der vises, når kalenderen indlæses. Lad feltet stå tomt for i dag
+rendering.macro.calendar.parameter.date.name=Dag
+rendering.macro.calendar.parameter.date.description=Dagen (fra 1 til 31) for den dato, der vises, når kalenderen indlæses. Lad feltet stå tomt for i dag
+rendering.macro.calendar.parameter.firstDay.name=Første dag
+rendering.macro.calendar.parameter.firstDay.description=Ugens første dag i kalenderen (fra 0 = søndag til 6 = lørdag). Lad feltet stå tomt for mandag
+rendering.macro.calendar.parameter.firstHour.name=Første time
+rendering.macro.calendar.parameter.firstHour.description=Den første time, der vises i kalenderen. Lad feltet stå tomt for standardværdien
+rendering.macro.calendar.parameter.minTime.name=Første tidspunkt
+rendering.macro.calendar.parameter.minTime.description=Det første tidspunkt, der vises i kalenderen. Brugerne ser ikke timer før dette tidspunkt. Lad feltet stå tomt for standardværdien (8.00)
+rendering.macro.calendar.parameter.maxTime.name=Sidste tidspunkt
+rendering.macro.calendar.parameter.maxTime.description=Det sidste tidspunkt, der vises i kalenderen. Brugerne ser ikke timer efter dette tidspunkt. Lad feltet stå tomt for standardværdien (23.00)
+</content>
+</xwikidoc>

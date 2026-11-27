@@ -57,6 +57,8 @@ xwiki.calendar.notification.done=Enregistré
 xwiki.calendar.notification.error=Impossible d'enregistrer le document. Erreur : la mise à jour a échoué !
 xwiki.calendar.notification.loading=Chargement de l'agenda...
 xwiki.calendar.notification.loaded=Agenda chargé
+xwiki.calendar.notification.loadingFailed=Échec du chargement des évènements du calendrier.
+xwiki.calendar.notification.truncated=Il y a beaucoup d''évènements à afficher, seuls les {0} premiers sont affichés.
 xwiki.calendar.jsonservice.invalid=Champ interdit ou non valide.
 rendering.macro.calendar.name=Calendrier
 rendering.macro.calendar.description=Afficher un Calendrier
@@ -71,7 +73,7 @@ rendering.macro.calendar.parameter.updateurl.description=URL de la page de mise 
 rendering.macro.calendar.parameter.classname.name=Classname
 rendering.macro.calendar.parameter.classname.description=Classname où les objets d'événements sont stockés. Ce paramètre est nécessaire, sauf si un service JSON et une URL de mise à jour sont fournis
 rendering.macro.calendar.parameter.startfield.name=Champ de démarrage
-rendering.macro.calendar.parameter.startfield.description=Champ de l'objet dans lequel la date de début des événements est stockée. Ce champ doit être un champ de date. Ce paramètre est nécessaire, sauf si un service JSON et une URL de mise à jour sont fournis
+rendering.macro.calendar.parameter.startfield.description=Champ de l'objet dans lequel la date de début des événements est stockée. Ce champ doit être un champ de date de la classe spécifiée par le paramètre classname. Ce paramètre est nécessaire, sauf si un service JSON et une URL de mise à jour sont fournis
 rendering.macro.calendar.parameter.durationfield.name=Durée
 rendering.macro.calendar.parameter.durationfield.description=Champ de l'objet où la durée des événements sera stockée. Ce champ doit être un champ date. Ce paramètre est nécessaire, sauf si service JSON et URL de mise à jour sont fournis
 rendering.macro.calendar.parameter.editable.name=Modifiable
@@ -111,5 +113,6 @@ xwiki.calendar.dayNames=['Dimanche','Lundi','Mardi','Mercredi','Jeudi','Vendredi
 xwiki.calendar.dayNamesShort=['Dim','Lun','Mar','Mer','Jeud','Ven','Sam']
 
 ## Used to indicate where deprecated keys end
-#@deprecatedend</content>
+#@deprecatedend
+</content>
 </xwikidoc>
